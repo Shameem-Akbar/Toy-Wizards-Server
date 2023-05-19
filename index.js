@@ -27,6 +27,12 @@ async function run() {
 
         const toyCollection = client.db('toyWizards').collection('toys');
 
+        app.get('/seller-toys', async (req, res) => {
+            const cursor = toyCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
         app.post('/seller-toys', async (req, res) => {
             const sellerToys = req.body;
             const result = await toyCollection.insertOne(sellerToys);
