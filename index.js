@@ -30,7 +30,17 @@ async function run() {
 
         //getting toy data by email
         app.get('/my-toys/:email', async (req, res) => {
-            const result = await toyCollection.find({ email: req.params.email }).toArray();
+            const type = req.query.type === "ascending";
+            const value = req.query.value;
+            const sortObj = {};
+            sortObj[value] = type ? 1 : -1;
+
+            if (sortObj[value]) {
+                result = await toyCollection.find({ email: req.params.email }).sort(sortObj).toArray();
+            }
+            else (
+                result = await toyCollection.find({ email: req.params.email }).toArray()
+            )
             res.send(result);
         })
 
