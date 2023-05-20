@@ -27,15 +27,14 @@ async function run() {
 
         const toyCollection = client.db('toyWizards').collection('toys');
 
-        app.get('/seller-toys', async (req, res) => {
-            const cursor = toyCollection.find();
-            const result = await cursor.toArray();
+        app.get('/my-toys/:email', async (req, res) => {
+            const result = await toyCollection.find({ email: req.params.email }).toArray();
             res.send(result);
         })
 
-        app.post('/seller-toys', async (req, res) => {
-            const sellerToys = req.body;
-            const result = await toyCollection.insertOne(sellerToys);
+        app.post('/add-toys', async (req, res) => {
+            const addToys = req.body;
+            const result = await toyCollection.insertOne(addToys);
             res.send(result);
         })
 
