@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -27,14 +27,25 @@ async function run() {
 
         const toyCollection = client.db('toyWizards').collection('toys');
 
+
+        //getting toy data by email
         app.get('/my-toys/:email', async (req, res) => {
             const result = await toyCollection.find({ email: req.params.email }).toArray();
             res.send(result);
         })
 
-        app.post('/add-toys', async (req, res) => {
+        //adding toys to db
+        app.post('/add-toy', async (req, res) => {
             const addToys = req.body;
             const result = await toyCollection.insertOne(addToys);
+            res.send(result);
+        })
+
+        //delete toy from db
+        app.delete('/delete-toy/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await toyCollection.deleteOne(query);
             res.send(result);
         })
 
