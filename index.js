@@ -30,13 +30,18 @@ async function run() {
 
         //getting toy data by email
         app.get('/my-toys/:email', async (req, res) => {
-            const type = req.query.type === "ascending";
-            const value = req.query.value;
-            const sortObj = {};
-            sortObj[value] = type ? 1 : -1;
+            const { sort } = req.query;
 
-            if (sortObj[value]) {
-                result = await toyCollection.find({ email: req.params.email }).sort(sortObj).toArray();
+            let sortQuery = {};
+
+            if (sort === 'highToLow') {
+                sortQuery = { price: -1 }; // Sort in descending order of price
+            } else if (sort === 'lowToHigh') {
+                sortQuery = { price: 1 }; // Sort in ascending order of price
+            }
+
+            if (sortQuery) {
+                result = await toyCollection.find({ email: req.params.email }).sort(sortQuery).toArray();
             }
             else (
                 result = await toyCollection.find({ email: req.params.email }).toArray()
