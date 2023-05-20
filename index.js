@@ -28,7 +28,12 @@ async function run() {
         const toyCollection = client.db('toyWizards').collection('toys');
 
 
-        //getting toy data by email
+        app.get('/toys', async (req, res) => {
+            const result = await toyCollection.find().toArray();
+            res.send(result);
+        })
+
+        //getting toy data by email and sorting data
         app.get('/my-toys/:email', async (req, res) => {
             const { sort } = req.query;
 
