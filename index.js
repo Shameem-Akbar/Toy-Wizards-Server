@@ -27,9 +27,22 @@ async function run() {
 
         const toyCollection = client.db('toyWizards').collection('toys');
 
+        const indexKeys = { toyName: 1 };
+        const indexOptions = { name: "toysName" };
+        const result = await toyCollection.createIndex(indexKeys, indexOptions);
 
+        //getting all toys data
         app.get('/toys', async (req, res) => {
             const result = await toyCollection.find().limit(20).toArray();
+            res.send(result);
+        })
+
+        //getting data by searching in all toys page
+        app.get('/getToysByText/:text', async (req, res) => {
+            const text = req.params.text;
+            const result = await toyCollection.find({
+                toyName: { $regex: text, $options: "i" }
+            }).toArray();
             res.send(result);
         })
 
