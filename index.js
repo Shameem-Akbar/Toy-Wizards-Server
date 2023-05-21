@@ -23,18 +23,30 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        client.connect();
+        client.connect((err) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+        });
 
         const toyCollection = client.db('toyWizards').collection('toys');
 
         const indexKeys = { toyName: 1 };
         const indexOptions = { name: "toysName" };
         const result = await toyCollection.createIndex(indexKeys, indexOptions);
+        console.log(result);
 
         //getting all toys data
         app.get('/toys', async (req, res) => {
             const result = await toyCollection.find().limit(20).toArray();
             res.send(result);
+        })
+
+        //getting toys by subCategory
+        app.get('/toysBySubCategory/:subCategory', async (req, res) => {
+            const toys = await toyCollection.find({ subCategory: req.params.subCategory }).toArray();
+            res.send(toys);
         })
 
         //getting data by searching in all toys page
@@ -43,6 +55,14 @@ async function run() {
             const result = await toyCollection.find({
                 toyName: { $regex: text, $options: "i" }
             }).toArray();
+            res.send(result);
+        })
+
+        //getting single toy data from db
+        app.get('/toy/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await toyCollection.findOne(query);
             res.send(result);
         })
 
@@ -59,12 +79,12 @@ async function run() {
             }
 
             if (sortQuery) {
-                result = await toyCollection.find({ email: req.params.email }).sort(sortQuery).toArray();
+                toys = await toyCollection.find({ email: req.params.email }).sort(sortQuery).toArray();
             }
             else (
-                result = await toyCollection.find({ email: req.params.email }).toArray()
+                toys = await toyCollection.find({ email: req.params.email }).toArray()
             )
-            res.send(result);
+            res.send(toys);
         })
 
         //adding toys to db
