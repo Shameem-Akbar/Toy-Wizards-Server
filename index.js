@@ -136,14 +136,6 @@ async function run() {
 }
 run().catch(console.dir);
 
-
-
-
-
-
-
-
-
 app.get('/', (req, res) => {
     res.send('Toy Wizards is Running');
 })
@@ -151,3 +143,5 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Toy Wizard Server is running on PORT: ${port}`);
 })
+
+//done
